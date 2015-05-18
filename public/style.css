@@ -1,0 +1,19 @@
+.table{
+    background-color: grey;
+}
+.rows {
+    background-color: white;
+}
+.cells {
+    width:20px;
+    height:20px;
+}
+.blocked {
+    background-color: black;
+}
+.cur-spot {
+    background-color: green;
+}
+.end-spot {
+	background-color: red;
+}

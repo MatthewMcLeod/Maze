@@ -1,0 +1,9 @@
+{
+	"name":"Maze",
+	"description":"multiplayer maze hosted on server",
+	"dependencies": {
+		"express":"*",
+		"socket.io":"*",
+		"http":"*"
+	}
+}
