@@ -1,5 +1,0 @@
-{
-	"name":"maze",
-	"dependencies": {
-	}
-}
