@@ -1,5 +1,5 @@
 .table{
-    background-color: grey;
+    border-spacing: 0px;
 }
 .rows {
     background-color: white;
@@ -16,4 +16,28 @@
 }
 .end-spot {
 	background-color: red;
+}
+.right-wall {
+  border-right: 1px;
+}
+.left-wall {
+  border-left: 1px;
+}
+.top-wall {
+  border-top: 1px;
+}
+.bottom-wall {
+  border-bottom: 1px;
+}
+.right-hole {
+  border-right: 0px;
+}
+.left-hole {
+  border-left: 0px;
+}
+.top-hole {
+  border-top: 0px;
+}
+.bottom-hole {
+  border-bottom: 0px;
 }
