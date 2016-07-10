@@ -8,9 +8,6 @@
     width:20px;
     height:20px;
 }
-.blocked {
-    background-color: black;
-}
 .cur-spot {
     background-color: green;
 }

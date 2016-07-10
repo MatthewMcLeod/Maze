@@ -76,18 +76,12 @@ $(document).keydown(function(e) {
 	}
 });
     var checkMove = function(mazeInfo, wantedMove, direction, location){
-			if (mazeInfo[location[0]][location[1]][direction] == false) {
+			if (mazeInfo[location[0]][location[1]][direction] === true) {
 				// wall is there
 				return false;
 			} else {
 				return true;
 			}
-        // if ( wantedMove[0] >= mazeInfo.length || wantedMove[1] >= mazeInfo[0].length || wantedMove[0] < 0 || wantedMove[1] < 0 || mazeInfo[wantedMove[0]][wantedMove[1]] === "X"){
-        //     return false;
-        // }
-        // else {
-        //     return true
-        // }
     }
     var findLocation = function(mazeInfo){
         for(var i=0; i<mazeInfo.length; i++){
@@ -107,16 +101,16 @@ $(document).keydown(function(e) {
 					var row = $('<tr></tr>').addClass('rows');
 					for (var j = 0; j < maze[0].length; j++){
 						var cell = $('<td></td>').addClass("cells")
-						if (maze[i][j].right) {
+						if (!maze[i][j].right) {
 							cell.addClass("right-hole");
 						}
-						if (maze[i][j].left) {
+						if (!maze[i][j].left) {
 							cell.addClass("left-hole");
 						}
-						if (maze[i][j].top) {
+						if (!maze[i][j].top) {
 							cell.addClass("top-hole");
 						}
-						if (maze[i][j].bottom) {
+						if (!maze[i][j].bottom) {
 							cell.addClass("bottom-hole");
 						}
 						if (maze[i][j].isPlayer){
@@ -125,12 +119,7 @@ $(document).keydown(function(e) {
 						if (maze[i][j].isFinish){
 							cell.addClass("end-spot");
 						}
-                        if (!maze[i][j].isVisited) {
-                            console.log("Not Visited!" +" row:" + i + "  col: " + j)
-                        }
-
 						row.append(cell)
-
 					}
 					table.append(row)
 				}
