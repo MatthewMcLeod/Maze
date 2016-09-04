@@ -1,60 +1,61 @@
-var TOP = 0;
-var RIGHT = 1;
-var BOTTOM = 2;
-var LEFT = 3;
+const TOP = 0;
+const RIGHT = 1;
+const BOTTOM = 2;
+const LEFT = 3;
 
 /*
-Since print in rows then column, it goes more like
+Indexing of elements occurs like maze[y][x] since ifirst entry is row, and second is column
 xi1j1 x1j2 x1j3 ....
 xi2j1           ....
 xi3j1
 */
 
-var generateMaze = function (MAZE_SIZE_X, MAZE_SIZE_Y) {
-	if (MAZE_SIZE_X < 1 || MAZE_SIZE_Y < 1) {
-		return {err: "Size of maze [" + MAZE_SIZE_X + "," + MAZE_SIZE_Y + "] is invalid. Pleae use positive numbers"}
+var generateMaze = function (MAZE_SIZE_ROWS, MAZE_SIZE_COLS) {
+	if (MAZE_SIZE_ROWS < 1 || MAZE_SIZE_COLS < 1) {
+		return {err: "Size of maze, Rows:" + MAZE_SIZE_ROWS + " and Columns: " + MAZE_SIZE_COLS + " is invalid. Pleae use positive numbers"}
 	}
-	MAZE_SIZE_X = MAZE_SIZE_X ? MAZE_SIZE_X : 25
-	MAZE_SIZE_X = MAZE_SIZE_X ? MAZE_SIZE_X : 25
+	MAZE_SIZE_ROWS = MAZE_SIZE_ROWS ? MAZE_SIZE_ROWS : 25
+	MAZE_SIZE_COLS = MAZE_SIZE_COLS ? MAZE_SIZE_COLS : 25
 
 	var maze = [];
-	for (var i = 0; i < MAZE_SIZE_Y; i++) {
+	for (var i = 0; i < MAZE_SIZE_ROWS; i++) {
 		maze.push([])
-		for (var j = 0; j < MAZE_SIZE_X; j++) {
+		for (var j = 0; j < MAZE_SIZE_COLS; j++) {
 			maze[i][j] = {
 				top: true,
 				right: true,
 				bottom: true,
 				left: true,
-				isPlayer: false,
 				isFinish: false,
 				isVisited: false
 			};
 		}
 	}
-
-	var seed = [Math.floor(MAZE_SIZE_Y * Math.random()), Math.floor(MAZE_SIZE_X * Math.random())]
-	maze = generatePath(maze, seed[0], seed[1])
+	// seed location to begin recusive backtracing to create path
+	var seed = [Math.floor(MAZE_SIZE_COLS * Math.random()), Math.floor(MAZE_SIZE_ROWS * Math.random())]
+	generatePath(maze, seed[0], seed[1])
 	removeInternalInfo(maze, ["isVisited"]);
 	return maze;
 }
 
-var generatePath = function (maze, x, y) {
-	maze[x][y].isVisited = true;
+var generatePath = function (maze, row, col) {
 	var possibleDirections = [TOP, RIGHT, BOTTOM, LEFT];
-	clearBoundaries(possibleDirections, x, y, maze);
+
+
+	maze[row][col].isVisited = true;
+	removeMazeEdges(possibleDirections, row, col, maze);
 
 	while (possibleDirections.length) {
-		var direction = possibleDirections[Math.floor(Math.random() * possibleDirections.length)] // possible direction
-		var newCoords = getNewCoordinates(x, y, direction);
+		var direction = possibleDirections[Math.floor(Math.random() * possibleDirections.length)] // randomly possible direction
+		var moveTo = moveToCoordinates(row, col, direction); // get coordinates you are moving to
 
-		if (maze[newCoords[0]][newCoords[1]].isVisited) {
+		if (maze[moveTo.row][moveTo.col].isVisited) {
 			removeDirection(possibleDirections, direction); // has already been visited
 
 		} else {
-			maze[x][y][numToString(direction)] = false;
-			maze[newCoords[0]][newCoords[1]][numToString(findOpposite(direction))] = false;
-			generatePath(maze, newCoords[0], newCoords[1])
+			maze[row][col][convertIntegerToString(direction)] = false;
+			maze[moveTo.row][moveTo.col][convertIntegerToString(findOpposite(direction))] = false;
+			generatePath(maze, moveTo.row, moveTo.col)
 		}
 	}
 
@@ -63,7 +64,7 @@ var generatePath = function (maze, x, y) {
 var findOpposite = function (direction) {
 	return (direction + 2) % 4;
 }
-var numToString = function (direction) {
+var convertIntegerToString = function (direction) {
 	var stringDirection = ""
 	switch (direction) {
 		case 0:
@@ -82,29 +83,29 @@ var numToString = function (direction) {
 	return stringDirection;
 }
 
-var getNewCoordinates = function (x, y, direction) {
-	var newCoords = [];
+var moveToCoordinates = function (row, col, direction) {
+	var moveTo = {row:row, col:col};
 	if (direction == TOP) {
-		newCoords = [x - 1, y]
+		moveTo.row --;
 	} else if (direction == RIGHT) {
-		newCoords = [x, y + 1]
+		moveTo.col ++;
 	} else if (direction == BOTTOM) {
-		newCoords = [x + 1, y];
+		moveTo.row ++;
 	} else if (direction == LEFT) {
-		newCoords = [x, y - 1]
+		moveTo.col --;
 	}
-	return newCoords;
+	return moveTo;
 }
-var clearBoundaries = function (possibleDirections, x, y, maze) {
-	if (x == 0) { // is actually Y
-		possibleDirections = removeDirection(possibleDirections, TOP)
-	} else if (x == (maze.length - 1)) {
-		possibleDirections = removeDirection(possibleDirections, BOTTOM)
-	}
-	if (y == 0) {
+var removeMazeEdges = function (possibleDirections, row, col, maze) {
+	if (col == 0) { 
 		possibleDirections = removeDirection(possibleDirections, LEFT)
-	} else if (y == (maze[0].length - 1)) {
+	} else if (col == (maze.length - 1)) {
 		possibleDirections = removeDirection(possibleDirections, RIGHT)
+	}
+	if (row == 0) {
+		possibleDirections = removeDirection(possibleDirections, TOP)
+	} else if (row == (maze[0].length - 1)) {
+		possibleDirections = removeDirection(possibleDirections, BOTTOM)
 	}
 }
 

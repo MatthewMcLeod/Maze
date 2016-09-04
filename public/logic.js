@@ -1,6 +1,5 @@
 $(document).ready(function() {
 
-$('#title').text('You are the green square. Reach the red square.')
 
 var socket = io();
 var mazeInfo
@@ -29,43 +28,41 @@ socket.on('restart', function(x){
 
 $(document).keydown(function(e) {
 	if (!restartPause){
+        var loc = findLocation(mazeInfo);
+
     switch(e.which) {
         case 37: // left
-            var xy = findLocation(mazeInfo);
-            if (xy != [-1,-1]){
-                var move = [xy[0], xy[1] - 1 ];
-                if (checkMove(mazeInfo,move, "left", xy)){
-					socket.emit('arrow key', {mazeState:mazeInfo, move: move , oldLocation:xy})
+            if (loc != {row:-1,col:-1}){
+                var move = {row:loc.row, col:loc.col - 1};
+                if (checkMove(mazeInfo,move, "left", loc)){
+					socket.emit('arrow key', {mazeState:mazeInfo, move: move , oldLocation:loc})
                 }
             }
             break;
 
         case 38: // up
-            var xy = findLocation(mazeInfo);
-            if (xy != [-1,-1]){
-                var move = [xy[0] - 1, xy[1]];
-                if (checkMove(mazeInfo,move,"top", xy)){
-					socket.emit('arrow key', {mazeState:mazeInfo, move: move , oldLocation:xy})
+            if (loc != {row:-1,col:-1}){
+                var move = {row:loc.row - 1, col:loc.col};
+                if (checkMove(mazeInfo,move,"top", loc)){
+					socket.emit('arrow key', {mazeState:mazeInfo, move: move , oldLocation:loc})
                 }
             }
             break;
 
         case 39: // right
-            var xy = findLocation(mazeInfo);
-            if (xy != [-1,-1]){
-                var move = [xy[0], xy[1] + 1];
-                if (checkMove(mazeInfo,move, "right", xy)){
-					socket.emit('arrow key', {mazeState:mazeInfo, move: move , oldLocation:xy})
+            if (loc != {row:-1,col:-1}){
+                var move = {row:loc.row, col:loc.col + 1};
+                if (checkMove(mazeInfo,move, "right", loc)){
+					socket.emit('arrow key', {mazeState:mazeInfo, move: move , oldLocation:loc})
                 }
             }
             break;
 
         case 40: // down
-            var xy = findLocation(mazeInfo);
-            if (xy != [-1,-1]){
-                var move = [xy[0] + 1, xy[1]];
-                if (checkMove(mazeInfo,move, "bottom", xy)){
-					socket.emit('arrow key', {mazeState:mazeInfo, move: move , oldLocation:xy})
+            if (loc != {row:-1,col:-1}){
+                var move = {row:loc.row + 1, col:loc.col};
+                if (checkMove(mazeInfo,move, "bottom", loc)){
+					socket.emit('arrow key', {mazeState:mazeInfo, move: move , oldLocation:loc})
                 }
             }
             break;
@@ -76,7 +73,7 @@ $(document).keydown(function(e) {
 	}
 });
     var checkMove = function(mazeInfo, wantedMove, direction, location){
-			if (mazeInfo[location[0]][location[1]][direction] === true) {
+			if (mazeInfo[location.row][location.col][direction] === true) {
 				// wall is there
 				return false;
 			} else {
@@ -87,15 +84,14 @@ $(document).keydown(function(e) {
         for(var i=0; i<mazeInfo.length; i++){
             for (var j = 0; j < mazeInfo[i].length; j++){
                 if (mazeInfo[i][j].isPlayer){
-                    return [i,j]
+                    return {row:i,col:j}
                 }
             }
         }
-        return [-1,-1]
+        return {row:-1,col:-1}
     }
     var makeTable = function (maze) {
         $('#my_table').empty();
-				console.log("Making Table")
         var table = $('<table border = "1"></table>').addClass("table");
 				for (var i = 0; i < maze.length; i++) {
 					var row = $('<tr></tr>').addClass('rows');

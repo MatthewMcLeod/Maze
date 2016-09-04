@@ -1,3 +1,5 @@
+"use strict"
+
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
@@ -7,26 +9,10 @@ var clients = {};
 
 var mazeGenerator = require("./maze/maze_generator");
 
-var MAZE_SIZE_X = 5;
-var MAZE_SIZE_Y = 5;
+const MAZE_SIZE_X = 5;
+const MAZE_SIZE_Y = 5;
 
 var maze = mazeGenerator(MAZE_SIZE_X,MAZE_SIZE_Y);
-
-var initializeSetUp = function (maze) {
-	maze[0][0].isPlayer = true;
-	maze[maze.length-1][maze[0].length-1].isFinish = true;
-}
-
-var makeMove = function (maze, move, xy) {
-	maze[xy[0]][xy[1]].isPlayer = false
-	maze[move[0]][move[1]].isPlayer = true;
-	if (move[0] === maze.length - 1 && move[1] === maze[maze.length - 1].length - 1) {
-		io.sockets.emit('end found', maze);
-		countdown()
-	}
-}
-
-initializeSetUp(maze)
 
 io.on('connection', function (socket) {
 	console.log('a user connected');
@@ -60,9 +46,24 @@ var countdown = function () {
 		io.sockets.emit('restart', x--);
 		if (x == -1) {
 			maze = mazeGenerator(MAZE_SIZE_X,MAZE_SIZE_Y);
-			initializeSetUp(maze)
+			initializeMaze(maze)
 			clearInterval(interval);
 			io.sockets.emit('update maze', maze);
 		}
 	}, 1000)
 }
+
+var initializeMaze = function (maze) {
+	maze[0][0].isPlayer = true;
+	maze[maze.length-1][maze[0].length-1].isFinish = true;
+}
+
+var makeMove = function (maze, moveTo, loc) {
+	maze[loc.row][loc.col].isPlayer = false
+	maze[moveTo.row][moveTo.col].isPlayer = true;
+	if (maze[moveTo.row][moveTo.col].isFinish) {
+		io.sockets.emit('end found', maze);
+		countdown()
+	}
+}
+initializeMaze(maze)
