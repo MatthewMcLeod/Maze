@@ -7,10 +7,10 @@ var io = require('socket.io')(http);
 
 var clients = {};
 
-var mazeGenerator = require("./maze/maze_generator");
+var mazeGenerator = require("maze-gen");
 
-const MAZE_SIZE_X = 5;
-const MAZE_SIZE_Y = 5;
+const MAZE_SIZE_X = 25;
+const MAZE_SIZE_Y = 25;
 
 var maze = mazeGenerator(MAZE_SIZE_X,MAZE_SIZE_Y);
 
@@ -41,7 +41,7 @@ http.listen(3000, function () {
 });
 
 var countdown = function () {
-	var x = 6;
+	var x = 5;
 	var interval = setInterval(function () {
 		io.sockets.emit('restart', x--);
 		if (x == -1) {
